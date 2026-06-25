@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AlgoViz | DSA Visualizer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════ NAVBAR -->
+<nav class="navbar">
+  <div class="nav-brand">
+    
+    AlgoViz
+    
+  </div>
+  <div class="nav-tabs">
+    <button class="tab-btn active" id="tab-path" onclick="switchTab('path')">⬡ Pathfinding</button>
+    <button class="tab-btn" id="tab-sort" onclick="switchTab('sort')">▦ Sorting</button>
+  </div>
+  <div class="nav-info">
+    <span class="nav-author">by Kshitij Agarwal</span>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════ PATHFINDING PANEL -->
+<div id="panel-path" class="panel active">
+  <div class="toolbar">
+    <div class="toolbar-group">
+      <label class="toolbar-label">Algorithm</label>
+      <select id="path-algo" class="select-box">
+        <option value="dijkstra">Dijkstra's</option>
+        <option value="astar">A* Search</option>
+        <option value="bfs">BFS</option>
+        <option value="dfs">DFS</option>
+        <option value="greedy">Greedy BFS</option>
+      </select>
+    </div>
+    <div class="toolbar-group">
+      <label class="toolbar-label">Speed</label>
+      <select id="path-speed" class="select-box">
+        <option value="fast">Fast</option>
+        <option value="medium" selected>Medium</option>
+        <option value="slow">Slow</option>
+      </select>
+    </div>
+    <div class="toolbar-group">
+      <label class="toolbar-label">Draw Mode</label>
+      <select id="draw-mode" class="select-box">
+        <option value="wall">Wall</option>
+        <option value="weight">Weight (×3)</option>
+      </select>
+    </div>
+    <div class="toolbar-group toolbar-actions">
+      <button class="btn btn-primary" onclick="startPathfinding()">▶ Visualize</button>
+      <button class="btn btn-secondary" onclick="generateMaze()">⊞ Maze</button>
+      <button class="btn btn-ghost" onclick="clearBoard()">✕ Clear</button>
+      <button class="btn btn-ghost" onclick="clearPath()">↺ Reset Path</button>
+    </div>
+    <div class="toolbar-group legend-group">
+      <div class="legend-item"><span class="leg-box start"></span>Start</div>
+      <div class="legend-item"><span class="leg-box end"></span>End</div>
+      <div class="legend-item"><span class="leg-box wall-leg"></span>Wall</div>
+      <div class="legend-item"><span class="leg-box weight-leg"></span>Weight</div>
+      <div class="legend-item"><span class="leg-box visited-leg"></span>Visited</div>
+      <div class="legend-item"><span class="leg-box path-leg"></span>Path</div>
+    </div>
+  </div>
+
+  <div class="algo-info-bar" id="path-info-bar">
+    <span id="algo-desc">Select an algorithm and click Visualize</span>
+    <span id="path-stats" class="stats-text"></span>
+  </div>
+
+  <div class="grid-container">
+    <div id="grid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ SORTING PANEL -->
+<div id="panel-sort" class="panel">
+  <div class="toolbar">
+    <div class="toolbar-group">
+      <label class="toolbar-label">Algorithm</label>
+      <select id="sort-algo" class="select-box">
+        <option value="bubble">Bubble Sort</option>
+        <option value="selection">Selection Sort</option>
+        <option value="insertion">Insertion Sort</option>
+        <option value="merge">Merge Sort</option>
+        <option value="quick">Quick Sort</option>
+        <option value="heap">Heap Sort</option>
+      </select>
+    </div>
+    <div class="toolbar-group">
+      <label class="toolbar-label">Array Size</label>
+      <input type="range" id="arr-size" min="10" max="120" value="60" class="range-input" oninput="updateSizeLabel(this.value)" />
+      <span id="size-label" class="range-label">60</span>
+    </div>
+    <div class="toolbar-group">
+      <label class="toolbar-label">Speed</label>
+      <select id="sort-speed" class="select-box">
+        <option value="fast">Fast</option>
+        <option value="medium" selected>Medium</option>
+        <option value="slow">Slow</option>
+      </select>
+    </div>
+    <div class="toolbar-group toolbar-actions">
+      <button class="btn btn-primary" onclick="startSorting()">▶ Sort</button>
+      <button class="btn btn-secondary" onclick="generateArray()">⟳ New Array</button>
+    </div>
+    <div class="toolbar-group legend-group">
+      <div class="legend-item"><span class="leg-box sort-default"></span>Unsorted</div>
+      <div class="legend-item"><span class="leg-box sort-comparing"></span>Comparing</div>
+      <div class="legend-item"><span class="leg-box sort-swapping"></span>Swapping</div>
+      <div class="legend-item"><span class="leg-box sort-sorted"></span>Sorted</div>
+    </div>
+  </div>
+
+  <div class="algo-info-bar" id="sort-info-bar">
+    <span id="sort-desc">Select a sorting algorithm and click Sort</span>
+    <span id="sort-stats" class="stats-text"></span>
+  </div>
+
+  <div class="sort-container">
+    <div id="sort-bars" class="sort-bars"></div>
+    <div class="complexity-panel">
+      <div class="complexity-title">Complexity</div>
+      <div class="complexity-row"><span class="cx-label">Time (Best)</span><span class="cx-val" id="cx-best">—</span></div>
+      <div class="complexity-row"><span class="cx-label">Time (Avg)</span><span class="cx-val" id="cx-avg">—</span></div>
+      <div class="complexity-row"><span class="cx-label">Time (Worst)</span><span class="cx-val" id="cx-worst">—</span></div>
+      <div class="complexity-row"><span class="cx-label">Space</span><span class="cx-val" id="cx-space">—</span></div>
+      <div class="complexity-row cx-stable-row"><span class="cx-label">Stable?</span><span class="cx-val" id="cx-stable">—</span></div>
+    </div>
+  </div>
+</div>
+
+<script src="pathfinding.js"></script>
+<script src="sorting.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
